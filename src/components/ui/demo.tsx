@@ -37,7 +37,6 @@ export default function DemoOne() {
           <DotOrbit
             className="w-full h-full"
             speed={speed}
-            intensity={intensity}
           />
         </div>
       )}
@@ -53,7 +52,6 @@ export default function DemoOne() {
             <DotOrbit
               className="w-full h-full"
               speed={speed * 1.5}
-              intensity={intensity * 0.8}
             />
           </div>
         </>
