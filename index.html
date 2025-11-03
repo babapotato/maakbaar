@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Marie & Max — Portfolio</title>
+  <meta name="description" content="Clean, minimal portfolio of Marie & Max. Work, bios, and contact." />
+  <meta name="color-scheme" content="light" />
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #0f172a; /* slate-900 */
+      --muted: #475569; /* slate-600 */
+      --accent: #0ea5e9; /* sky-500 */
+      --accent-600: #0284c7; /* sky-600 */
+      --card: #f8fafc; /* slate-50 */
+      --shadow: 0 10px 25px rgba(2, 8, 23, 0.08);
+      --radius: 14px;
+      --radius-sm: 10px;
+      --maxw: 1100px;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      line-height: 1.65;
+      scroll-behavior: smooth;
+    }
+
+    /* Global layout */
+    .container {
+      width: 100%;
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    section {
+      padding: 96px 0;
+      position: relative;
+    }
+
+    .section-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 40px;
+    }
+
+    h1, h2, h3 {
+      margin: 0 0 12px 0;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+    }
+    h1 { font-size: clamp(32px, 6vw, 56px); }
+    h2 { font-size: clamp(24px, 4vw, 36px); }
+    p.lead { color: var(--muted); font-size: clamp(16px, 2.2vw, 20px); margin: 12px 0 24px 0; }
+
+    a { color: inherit; text-decoration: none; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 10px; padding: 14px 18px; border-radius: 999px; font-weight: 600;
+      color: #fff; background: var(--accent); box-shadow: var(--shadow);
+      transition: transform 200ms ease, background 200ms ease, box-shadow 200ms ease;
+    }
+    .btn:hover { transform: translateY(-2px); background: var(--accent-600); box-shadow: 0 12px 30px rgba(14,165,233,0.25); }
+
+    /* Top-center floating nav */
+    .nav-wrap {
+      position: sticky; top: 12px; z-index: 50; display: flex; justify-content: center; pointer-events: none;
+    }
+    .nav-inner { position: relative; pointer-events: auto; }
+    .nav-fab {
+      position: relative; left: 50%; transform: translateX(-50%);
+      border: 0; background: var(--text); color: #fff; border-radius: 999px;
+      padding: 12px 18px; font-weight: 700; letter-spacing: .02em; cursor: pointer;
+      box-shadow: var(--shadow); transition: transform 180ms ease, box-shadow 180ms ease, opacity 180ms ease;
+    }
+    .nav-fab:hover { transform: translateX(-50%) translateY(-2px); box-shadow: 0 12px 28px rgba(2,8,23,0.2); }
+    .nav-menu {
+      position: absolute; left: 50%; transform: translateX(-50%);
+      top: calc(100% + 8px);
+      background: var(--bg); border-radius: 999px; box-shadow: var(--shadow);
+      display: grid; grid-auto-flow: column; gap: 4px; padding: 6px; opacity: 0; pointer-events: none; transition: opacity 200ms ease, transform 200ms ease;
+    }
+    .nav-menu.open { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+    .nav-link {
+      padding: 10px 14px; border-radius: 999px; color: var(--muted); font-weight: 600; transition: background 150ms ease, color 150ms ease, transform 150ms ease;
+    }
+    .nav-link:hover { background: var(--card); color: var(--text); transform: translateY(-1px); }
+
+    /* Hero */
+    #home .hero {
+      display: grid; gap: 28px; align-items: center;
+    }
+    #home .cta-row { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    /* Portfolio: horizontal swipe gallery */
+    #portfolio .gallery-wrap { overflow: hidden; }
+    .gallery {
+      display: grid; grid-auto-flow: column; grid-auto-columns: minmax(260px, 36%);
+      gap: 16px; overflow-x: auto; padding-bottom: 6px; scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .gallery::-webkit-scrollbar { display: none; }
+    .gallery-item { scroll-snap-align: start; border-radius: var(--radius-sm); overflow: hidden; background: #e2e8f0; position: relative; }
+    .gallery-item img { width: 100%; height: 280px; object-fit: cover; display: block; }
+    .gallery-item .caption { position: absolute; inset: auto 0 0 0; padding: 10px 12px; color: #fff; background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.65) 100%); font-size: 14px; }
+
+    /* About */
+    .about-grid {
+      display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 20px;
+    }
+    .bio {
+      background: var(--bg); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; display: grid; grid-template-columns: 120px 1fr; gap: 18px; padding: 18px;
+    }
+    .bio img { width: 120px; height: 120px; object-fit: cover; border-radius: 12px; }
+    .bio h3 { margin: 0 0 6px 0; font-size: 20px; }
+    .bio p { margin: 0; color: var(--muted); }
+
+    /* Contact */
+    .contact-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 20px; }
+    .list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+    .list a { color: var(--accent-600); }
+    form { display: grid; gap: 12px; }
+    input, textarea {
+      width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid #e2e8f0; background: #fff; transition: border 120ms ease, box-shadow 120ms ease;
+      font: inherit;
+    }
+    textarea { min-height: 120px; resize: vertical; }
+    input:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px rgba(14,165,233,0.15); }
+
+    /* Footer */
+    footer { padding: 36px 0 60px; color: var(--muted); text-align: center; }
+
+    /* Reveal animations */
+    .reveal { opacity: 0; transform: translateY(12px); transition: opacity 600ms ease, transform 600ms ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* Responsive tweaks */
+    @media (max-width: 1024px) {
+      .gallery { grid-auto-columns: minmax(220px, 60%); }
+      .contact-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 720px) {
+      section { padding: 72px 0; }
+      .section-card { padding: 28px; }
+      .about-grid { grid-template-columns: 1fr; }
+      .bio { grid-template-columns: 90px 1fr; }
+      .bio img { width: 90px; height: 90px; }
+      .gallery-item img { height: 220px; }
+      .nav-menu { grid-auto-flow: row; border-radius: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Floating central navigation -->
+  <div class="nav-wrap" aria-hidden="false">
+    <div class="nav-inner">
+      <button class="nav-fab" aria-expanded="false" aria-controls="main-menu" id="navFab">Menu</button>
+      <nav id="main-menu" class="nav-menu" role="navigation" aria-label="Primary" hidden>
+        <a class="nav-link" href="#home">Home</a>
+        <a class="nav-link" href="#portfolio">Portfolio</a>
+        <a class="nav-link" href="#about">About</a>
+        <a class="nav-link" href="#contact">Contact</a>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Hero / Value Proposition -->
+  <section id="home" class="container">
+    <div class="section-card hero reveal">
+      <h1>Design & Photography that feels like you</h1>
+      <p class="lead">We are Marie & Max — crafting clean visuals and thoughtful stories. Explore selected work and get in touch for collaborations.</p>
+      <div class="cta-row">
+        <a href="#contact" class="btn">Start a conversation</a>
+        <a href="#portfolio" class="btn" style="background:#111827">See our work</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Portfolio Gallery -->
+  <section id="portfolio" class="container">
+    <div class="section-card reveal">
+      <h2>Selected Work</h2>
+      <p class="lead">Swipe or drag to browse. Optimized for fast, responsive viewing.</p>
+      <div class="gallery-wrap">
+        <div class="gallery" id="gallery">
+          <!-- Replace src with your images (local or hosted). Using placeholders for now. -->
+          <figure class="gallery-item"><img loading="lazy" src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1600&auto=format&fit=crop" alt="Project 1" /><figcaption class="caption">Editorial shoot</figcaption></figure>
+          <figure class="gallery-item"><img loading="lazy" src="https://images.unsplash.com/photo-1520975916090-3105956dac38?q=80&w=1600&auto=format&fit=crop" alt="Project 2" /><figcaption class="caption">Brand identity</figcaption></figure>
+          <figure class="gallery-item"><img loading="lazy" src="https://images.unsplash.com/photo-1520974944082-7c0a2a7a6596?q=80&w=1600&auto=format&fit=crop" alt="Project 3" /><figcaption class="caption">Lookbook</figcaption></figure>
+          <figure class="gallery-item"><img loading="lazy" src="https://images.unsplash.com/photo-1517817748496-58ffb0a67e16?q=80&w=1600&auto=format&fit=crop" alt="Project 4" /><figcaption class="caption">Product set</figcaption></figure>
+          <figure class="gallery-item"><img loading="lazy" src="https://images.unsplash.com/photo-1487412912498-0447578fcca8?q=80&w=1600&auto=format&fit=crop" alt="Project 5" /><figcaption class="caption">Studio series</figcaption></figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Us -->
+  <section id="about" class="container">
+    <div class="section-card reveal">
+      <h2>About Us</h2>
+      <p class="lead">Two people, one studio. We combine design clarity with human warmth.</p>
+      <div class="about-grid">
+        <article class="bio">
+          <img loading="lazy" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1200&auto=format&fit=crop" alt="Portrait of Marie" />
+          <div>
+            <h3>Marie</h3>
+            <p>Designer focused on clean systems, typography, and brand experiences. Believes in less but better.</p>
+          </div>
+        </article>
+        <article class="bio">
+          <img loading="lazy" src="https://images.unsplash.com/photo-1544005310-94ddf0286df2?q=80&w=1200&auto=format&fit=crop" alt="Portrait of Max" />
+          <div>
+            <h3>Max</h3>
+            <p>Photographer and retoucher. Tells stories with light and subtle color—always people-first.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="container">
+    <div class="section-card reveal">
+      <h2>Contact</h2>
+      <p class="lead">We'd love to hear from you. Reach out directly or use the form.</p>
+      <div class="contact-grid">
+        <div>
+          <ul class="list">
+            <li><strong>Email:</strong> <a href="mailto:hello@example.com">hello@example.com</a></li>
+            <li><strong>Phone:</strong> <a href="tel:+1234567890">+1 (234) 567-890</a></li>
+            <li><strong>LinkedIn (Marie):</strong> <a target="_blank" rel="noreferrer" href="https://www.linkedin.com/">View profile</a></li>
+            <li><strong>LinkedIn (Max):</strong> <a target="_blank" rel="noreferrer" href="https://www.linkedin.com/">View profile</a></li>
+            <li><strong>Instagram:</strong> <a target="_blank" rel="noreferrer" href="https://www.instagram.com/">@studiohandle</a></li>
+          </ul>
+        </div>
+        <div>
+          <!-- Formspree: replace with your form endpoint -->
+          <form action="https://formspree.io/f/your-id" method="POST">
+            <input type="hidden" name="_subject" value="New inquiry from portfolio" />
+            <label>
+              <span style="display:block;margin:0 0 6px 2px;color:var(--muted);font-weight:600">Name</span>
+              <input type="text" name="name" placeholder="Your name" required />
+            </label>
+            <label>
+              <span style="display:block;margin:0 0 6px 2px;color:var(--muted);font-weight:600">Email</span>
+              <input type="email" name="email" placeholder="you@example.com" required />
+            </label>
+            <label>
+              <span style="display:block;margin:0 0 6px 2px;color:var(--muted);font-weight:600">Message</span>
+              <textarea name="message" placeholder="Tell us about your project" required></textarea>
+            </label>
+            <button class="btn" type="submit">Send message</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="container">
+    <small>© <span id="year"></span> Marie & Max. All rights reserved.</small>
+  </footer>
+
+  <script>
+    // Expandable top-center nav behavior
+    (function(){
+      const fab = document.getElementById('navFab');
+      const menu = document.getElementById('main-menu');
+      function setOpen(open){
+        fab.setAttribute('aria-expanded', String(open));
+        if (open) { menu.hidden = false; requestAnimationFrame(()=> menu.classList.add('open')); }
+        else { menu.classList.remove('open'); setTimeout(()=>{ menu.hidden = true; }, 180); }
+      }
+      let isOpen = false;
+      fab.addEventListener('click', () => { isOpen = !isOpen; setOpen(isOpen); });
+      document.addEventListener('click', (e)=>{
+        if (!isOpen) return;
+        const within = e.target === fab || menu.contains(e.target);
+        if (!within) { isOpen = false; setOpen(false); }
+      });
+      // Close after clicking a nav link
+      menu.querySelectorAll('a').forEach(a=> a.addEventListener('click', ()=> { isOpen = false; setOpen(false); }));
+    })();
+
+    // Drag-to-scroll for gallery (mouse + touch)
+    (function(){
+      const el = document.getElementById('gallery');
+      if (!el) return;
+      let isDown = false, startX = 0, scrollLeft = 0;
+      const start = (x) => { isDown = true; startX = x - el.offsetLeft; scrollLeft = el.scrollLeft; el.style.cursor = 'grabbing'; };
+      const move = (x) => { if(!isDown) return; const walk = (x - el.offsetLeft - startX); el.scrollLeft = scrollLeft - walk; };
+      const end = () => { isDown = false; el.style.cursor = ''; };
+      el.addEventListener('mousedown', (e)=> { start(e.pageX); });
+      el.addEventListener('mousemove', (e)=> { move(e.pageX); });
+      ['mouseleave','mouseup'].forEach(evt=> el.addEventListener(evt, end));
+      el.addEventListener('touchstart', (e)=> { start(e.touches[0].pageX); }, {passive:true});
+      el.addEventListener('touchmove', (e)=> { move(e.touches[0].pageX); }, {passive:true});
+      el.addEventListener('touchend', end);
+    })();
+
+    // Reveal-on-scroll animations
+    (function(){
+      const els = document.querySelectorAll('.reveal');
+      const io = new IntersectionObserver((entries)=>{
+        entries.forEach((entry)=>{
+          if (entry.isIntersecting) entry.target.classList.add('visible');
+        });
+      }, { threshold: 0.12 });
+      els.forEach(el=> io.observe(el));
+    })();
+
+    // Footer year
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
+
+
