@@ -28,7 +28,10 @@
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
       line-height: 1.65;
       scroll-behavior: smooth;
+      height: 100%;
     }
+    html { scroll-snap-type: y mandatory; }
+    body { scroll-snap-type: y mandatory; }
 
     /* Global layout */
     .container {
@@ -41,12 +44,17 @@
     section {
       padding: 96px 0;
       position: relative;
+      height: 100svh;
+      display: flex;
+      align-items: center;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
     }
 
     .section-card {
-      background: var(--card);
+      background: transparent;
       border-radius: var(--radius);
-      box-shadow: var(--shadow);
+      box-shadow: none;
       padding: 40px;
     }
 
@@ -68,29 +76,24 @@
     }
     .btn:hover { transform: translateY(-2px); background: var(--accent-600); box-shadow: 0 12px 30px rgba(14,165,233,0.25); }
 
-    /* Top-center floating nav */
-    .nav-wrap {
-      position: sticky; top: 12px; z-index: 50; display: flex; justify-content: center; pointer-events: none;
-    }
-    .nav-inner { position: relative; pointer-events: auto; }
-    .nav-fab {
-      position: relative; left: 50%; transform: translateX(-50%);
-      border: 0; background: var(--text); color: #fff; border-radius: 999px;
-      padding: 12px 18px; font-weight: 700; letter-spacing: .02em; cursor: pointer;
-      box-shadow: var(--shadow); transition: transform 180ms ease, box-shadow 180ms ease, opacity 180ms ease;
-    }
-    .nav-fab:hover { transform: translateX(-50%) translateY(-2px); box-shadow: 0 12px 28px rgba(2,8,23,0.2); }
+    /* Fixed pill navigation (always visible) */
+    .nav-wrap { position: fixed; top: 12px; left: 0; right: 0; z-index: 70; display: flex; justify-content: center; pointer-events: none; }
+    .nav-inner { pointer-events: auto; }
     .nav-menu {
-      position: absolute; left: 50%; transform: translateX(-50%);
-      top: calc(100% + 8px);
+      position: static; transform: none;
       background: var(--bg); border-radius: 999px; box-shadow: var(--shadow);
-      display: grid; grid-auto-flow: column; gap: 4px; padding: 6px; opacity: 0; pointer-events: none; transition: opacity 200ms ease, transform 200ms ease;
+      display: grid; grid-auto-flow: column; gap: 4px; padding: 6px;
     }
-    .nav-menu.open { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
     .nav-link {
-      padding: 10px 14px; border-radius: 999px; color: var(--muted); font-weight: 600; transition: background 150ms ease, color 150ms ease, transform 150ms ease;
+      padding: 10px 14px; border-radius: 999px; color: var(--muted); font-weight: 600; transition: background 150ms ease, color 150ms ease, transform 150ms ease, font-size 220ms ease;
+      font-size: clamp(14px, 1.8vw, 18px);
     }
     .nav-link:hover { background: var(--card); color: var(--text); transform: translateY(-1px); }
+    .nav-link.active {
+      background: transparent; color: var(--text);
+      font-weight: 800;
+      font-size: clamp(24px, 4vw, 36px); /* Headline-like size */
+    }
 
     /* Hero */
     #home .hero {
@@ -115,7 +118,7 @@
       display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 20px;
     }
     .bio {
-      background: var(--bg); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; display: grid; grid-template-columns: 120px 1fr; gap: 18px; padding: 18px;
+      background: transparent; border-radius: 0; box-shadow: none; overflow: hidden; display: grid; grid-template-columns: 120px 1fr; gap: 18px; padding: 18px;
     }
     .bio img { width: 120px; height: 120px; object-fit: cover; border-radius: 12px; }
     .bio h3 { margin: 0 0 6px 0; font-size: 20px; }
@@ -146,22 +149,42 @@
       .contact-grid { grid-template-columns: 1fr; }
     }
     @media (max-width: 720px) {
-      section { padding: 72px 0; }
-      .section-card { padding: 28px; }
+      .container { padding: 0 18px; }
+      section { padding: 64px 0; }
+      .section-card { padding: 24px; }
       .about-grid { grid-template-columns: 1fr; }
-      .bio { grid-template-columns: 90px 1fr; }
+      .bio { grid-template-columns: 90px 1fr; gap: 14px; }
       .bio img { width: 90px; height: 90px; }
+      .gallery { grid-auto-columns: 78%; }
       .gallery-item img { height: 220px; }
       .nav-menu { grid-auto-flow: row; border-radius: 16px; }
+    }
+    @media (max-width: 540px) {
+      h1 { font-size: clamp(28px, 8vw, 36px); }
+      h2 { font-size: clamp(20px, 5.5vw, 28px); }
+      p.lead { font-size: 16px; }
+      .cta-row { gap: 10px; }
+      .btn { padding: 12px 16px; }
+    }
+    @media (max-width: 480px) {
+      .container { padding: 0 16px; }
+      section { padding: 56px 0; }
+      .section-card { padding: 20px; }
+      /* Place nav at bottom center on mobile */
+      .nav-wrap { top: auto; bottom: 12px; }
+      .nav-inner { display: flex; justify-content: center; }
+      .nav-menu { max-width: calc(100vw - 24px); overflow: visible; }
+      /* Stack bios vertically for narrow devices */
+      .bio { grid-template-columns: 1fr; }
+      .bio img { width: 100%; height: 180px; }
     }
   </style>
 </head>
 <body>
-  <!-- Floating central navigation -->
+  <!-- Fixed pill navigation (always visible) -->
   <div class="nav-wrap" aria-hidden="false">
     <div class="nav-inner">
-      <button class="nav-fab" aria-expanded="false" aria-controls="main-menu" id="navFab">Menu</button>
-      <nav id="main-menu" class="nav-menu" role="navigation" aria-label="Primary" hidden>
+      <nav id="main-menu" class="nav-menu" role="navigation" aria-label="Primary">
         <a class="nav-link" href="#home">Home</a>
         <a class="nav-link" href="#portfolio">Portfolio</a>
         <a class="nav-link" href="#about">About</a>
@@ -175,17 +198,13 @@
     <div class="section-card hero reveal">
       <h1>Design & Photography that feels like you</h1>
       <p class="lead">We are Marie & Max — crafting clean visuals and thoughtful stories. Explore selected work and get in touch for collaborations.</p>
-      <div class="cta-row">
-        <a href="#contact" class="btn">Start a conversation</a>
-        <a href="#portfolio" class="btn" style="background:#111827">See our work</a>
-      </div>
+
     </div>
   </section>
 
   <!-- Portfolio Gallery -->
   <section id="portfolio" class="container">
     <div class="section-card reveal">
-      <h2>Selected Work</h2>
       <p class="lead">Swipe or drag to browse. Optimized for fast, responsive viewing.</p>
       <div class="gallery-wrap">
         <div class="gallery" id="gallery">
@@ -203,7 +222,6 @@
   <!-- About Us -->
   <section id="about" class="container">
     <div class="section-card reveal">
-      <h2>About Us</h2>
       <p class="lead">Two people, one studio. We combine design clarity with human warmth.</p>
       <div class="about-grid">
         <article class="bio">
@@ -227,7 +245,6 @@
   <!-- Contact -->
   <section id="contact" class="container">
     <div class="section-card reveal">
-      <h2>Contact</h2>
       <p class="lead">We'd love to hear from you. Reach out directly or use the form.</p>
       <div class="contact-grid">
         <div>
@@ -267,24 +284,21 @@
   </footer>
 
   <script>
-    // Expandable top-center nav behavior
+    // Highlight active section in nav on scroll
     (function(){
-      const fab = document.getElementById('navFab');
-      const menu = document.getElementById('main-menu');
-      function setOpen(open){
-        fab.setAttribute('aria-expanded', String(open));
-        if (open) { menu.hidden = false; requestAnimationFrame(()=> menu.classList.add('open')); }
-        else { menu.classList.remove('open'); setTimeout(()=>{ menu.hidden = true; }, 180); }
-      }
-      let isOpen = false;
-      fab.addEventListener('click', () => { isOpen = !isOpen; setOpen(isOpen); });
-      document.addEventListener('click', (e)=>{
-        if (!isOpen) return;
-        const within = e.target === fab || menu.contains(e.target);
-        if (!within) { isOpen = false; setOpen(false); }
-      });
-      // Close after clicking a nav link
-      menu.querySelectorAll('a').forEach(a=> a.addEventListener('click', ()=> { isOpen = false; setOpen(false); }));
+      const sections = Array.from(document.querySelectorAll('section'));
+      const links = Array.from(document.querySelectorAll('#main-menu .nav-link'));
+      const byId = (id) => links.find(a => a.getAttribute('href') === `#${id}`);
+      const io = new IntersectionObserver((entries)=>{
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          const id = entry.target.id;
+          links.forEach(l => l.classList.remove('active'));
+          const active = byId(id);
+          if (active) active.classList.add('active');
+        });
+      }, { threshold: 0.55 });
+      sections.forEach(s => io.observe(s));
     })();
 
     // Drag-to-scroll for gallery (mouse + touch)
