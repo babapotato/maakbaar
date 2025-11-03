@@ -36,7 +36,11 @@ export default function DemoOne() {
         <div className="w-full h-full absolute inset-0 bg-black">
           <DotOrbit
             className="w-full h-full"
+            colors={["#333333", "#1a1a1a"]}
+            colorBack="#000000"
             speed={speed}
+            size={intensity * 0.1}
+            spreading={0.3}
           />
         </div>
       )}
@@ -51,7 +55,11 @@ export default function DemoOne() {
           <div className="w-full h-full absolute inset-0 opacity-60">
             <DotOrbit
               className="w-full h-full"
+              colors={["#333333", "#1a1a1a"]}
+              colorBack="#000000"
               speed={speed * 1.5}
+              size={intensity * 0.08}
+              spreading={0.25}
             />
           </div>
         </>
